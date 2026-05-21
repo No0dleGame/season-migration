@@ -1,0 +1,12 @@
+# Tasks
+- [ ] Task 1: 初始化 Flutter 项目并限定平台
+  - [ ] SubTask 1.1: 运行 `flutter create --platforms=android .` 初始化项目
+  - [ ] SubTask 1.2: 清理项目中不必要的文件和默认的 Counter 示例
+- [ ] Task 2: 配置核心依赖项
+  - [ ] SubTask 2.1: 在 `pubspec.yaml` 中添加 `sqflite`, `path_provider`, `amap_flutter_map` (高德地图), `geolocator` (GPS), `provider` / `riverpod` (状态管理)
+- [ ] Task 3: 建立 Feature-Based 架构目录
+  - [ ] SubTask 3.1: 创建 `lib/core` 目录（包含 `theme`, `database`, `utils`, `network` 等基础设施）
+  - [ ] SubTask 3.2: 创建 `lib/features` 目录，并在其下建立 `map`, `parking`, `weather`, `favorites` 等功能模块的空结构
+- [ ] Task 4: 配置极简与夜间优先主题
+  - [ ] SubTask 4.1: 在 `lib/core/theme` 中定义以黑色/深灰色为主的工具感主题
+  - [ ] SubTask 4.2: 更新 `main.dart` 应用该主题并配置基础路由

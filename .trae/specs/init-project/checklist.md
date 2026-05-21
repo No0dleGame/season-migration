@@ -1,0 +1,4 @@
+- [x] Flutter 项目已成功初始化，且 `android` 为唯一平台文件夹
+- [x] `pubspec.yaml` 包含了 SQLite、高德地图、GPS 等 MVP 核心依赖
+- [x] 项目成功建立了 `lib/core` 和 `lib/features`（含 map/parking/weather 等子目录）的结构
+- [x] 默认代码已被移除，并配置了夜间优先的极简全局主题
