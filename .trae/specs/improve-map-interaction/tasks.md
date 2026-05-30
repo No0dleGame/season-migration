@@ -1,0 +1,12 @@
+# Tasks
+- [x] Task 1: 优化地图交互配置
+  - [x] SubTask 1.1: 在 `TravelMap.jsx` 的 `MapContainer` 中设置 `scrollWheelZoom={true}` 开启滚轮缩放。
+  - [x] SubTask 1.2: 设置 `zoomControl={false}` 关闭默认左上角的缩放按钮。
+  - [x] SubTask 1.3: 引入 `<ZoomControl position="bottomright" />` 或 `topright` 将缩放按钮移至不被遮挡的右侧。
+- [x] Task 2: 实现自动聚焦当前位置
+  - [x] SubTask 2.1: 在 `TravelMap.jsx` 中编写一个子组件 `MapCenterUpdater`。
+  - [x] SubTask 2.2: 使用 `useMap` 获取地图实例，并在 `useEffect` 中监听 `center` 的变化，调用 `map.flyTo(center)` 实现平滑聚焦。
+- [x] Task 3: 区分标记点颜色
+  - [x] SubTask 3.1: 利用 `L.divIcon` 配合 SVG 或 Tailwind 类名，定义 `currentIcon`（如蓝色/绿色主题）。
+  - [x] SubTask 3.2: 定义 `targetIcon`（如红色/橙色主题）。
+  - [x] SubTask 3.3: 将这两个 Icon 分别应用到对应的 `<Marker>` 组件上。

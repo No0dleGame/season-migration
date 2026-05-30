@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { storage } from '../utils/storage';
@@ -15,6 +15,37 @@ L.Icon.Default.mergeOptions({
   iconUrl,
   shadowUrl,
 });
+
+// 自定义当前位置图标 (绿色)
+const currentIcon = L.divIcon({
+  className: 'custom-current-icon',
+  html: `<div style="background-color: #10b981; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.4);"></div>`,
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+});
+
+// 自定义下一站图标 (陶土色)
+const nextIcon = L.divIcon({
+  className: 'custom-next-icon',
+  html: `<div style="background-color: #e2725b; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.4);"></div>`,
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+});
+
+/**
+ * 监听地图中心更新的辅助组件
+ * @param {Object} props
+ * @param {Array} props.center - 地图中心坐标 [lat, lng]
+ */
+function MapCenterUpdater({ center }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center && center.length === 2) {
+      map.flyTo(center, map.getZoom(), { duration: 1.5 });
+    }
+  }, [center, map]);
+  return null;
+}
 
 /**
  * 监听地图点击事件的辅助组件
@@ -71,9 +102,12 @@ export default function TravelMap({ currentLocation, role }) {
       <MapContainer 
         center={defaultCenter} 
         zoom={13} 
-        scrollWheelZoom={false}
+        zoomControl={false}
+        scrollWheelZoom={true}
         className="w-full h-full"
       >
+        <ZoomControl position="topright" />
+        <MapCenterUpdater center={defaultCenter} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -81,14 +115,14 @@ export default function TravelMap({ currentLocation, role }) {
         
         {/* 渲染当前位置标记 */}
         {currentLocation?.lat && currentLocation?.lon && (
-          <Marker position={[currentLocation.lat, currentLocation.lon]}>
+          <Marker position={[currentLocation.lat, currentLocation.lon]} icon={currentIcon}>
             <Popup>当前位置</Popup>
           </Marker>
         )}
 
         {/* 渲染点击生成的下一站标记 */}
         {nextDestination?.lat && nextDestination?.lng && (
-          <Marker position={[nextDestination.lat, nextDestination.lng]}>
+          <Marker position={[nextDestination.lat, nextDestination.lng]} icon={nextIcon}>
             <Popup>下一站</Popup>
           </Marker>
         )}
