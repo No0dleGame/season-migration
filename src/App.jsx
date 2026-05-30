@@ -92,10 +92,37 @@ function App() {
   };
 
   // 添加目标点
-  const handleAddTargetPoint = (coords) => {
-    const newPoints = [...targetPoints, coords];
+  const handleAddTargetPoint = async (coords) => {
+    // 先添加一个带有“加载中...”状态的临时点，避免用户觉得没反应
+    const tempPoint = { ...coords, address: '正在获取地址信息...' };
+    const newPoints = [...targetPoints, tempPoint];
     setTargetPoints(newPoints);
-    storage.setTargetPoints(newPoints);
+    
+    try {
+      const address = await getAddressDetail(coords.lat, coords.lng);
+      // 找到刚刚添加的那个点并更新地址
+      setTargetPoints(prevPoints => {
+        const updatedPoints = [...prevPoints];
+        // 假设最后一个添加的或者根据坐标匹配
+        const index = updatedPoints.findIndex(p => p.lat === coords.lat && p.lng === coords.lng);
+        if (index !== -1) {
+          updatedPoints[index] = { ...coords, address };
+        }
+        storage.setTargetPoints(updatedPoints);
+        return updatedPoints;
+      });
+    } catch (e) {
+      console.error(e);
+      setTargetPoints(prevPoints => {
+        const updatedPoints = [...prevPoints];
+        const index = updatedPoints.findIndex(p => p.lat === coords.lat && p.lng === coords.lng);
+        if (index !== -1) {
+          updatedPoints[index] = { ...coords, address: '未知地址' };
+        }
+        storage.setTargetPoints(updatedPoints);
+        return updatedPoints;
+      });
+    }
   };
 
   // 移除目标点
