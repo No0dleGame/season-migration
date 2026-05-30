@@ -38,11 +38,14 @@ const targetIcon = L.divIcon({
  */
 function MapCenterUpdater({ center }) {
   const map = useMap();
+  const lat = center?.[0];
+  const lng = center?.[1];
+
   useEffect(() => {
-    if (center && center.length === 2) {
-      map.flyTo(center, map.getZoom(), { duration: 1.5 });
+    if (lat !== undefined && lng !== undefined) {
+      map.flyTo([lat, lng], map.getZoom(), { duration: 1.5 });
     }
-  }, [center, map]);
+  }, [lat, lng, map]); // 仅当经纬度数值真正改变时才触发重新聚焦，防止添加目标点等无关渲染导致重置视角
   return null;
 }
 
