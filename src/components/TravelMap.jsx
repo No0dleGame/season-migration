@@ -104,7 +104,7 @@ export default function TravelMap({ currentLocation, role, targetPoints = [], on
         scrollWheelZoom={true}
         className="w-full h-full"
       >
-        <ZoomControl position="topright" />
+        <ZoomControl position="bottomleft" />
         <MapCenterUpdater center={defaultCenter} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -121,7 +121,10 @@ export default function TravelMap({ currentLocation, role, targetPoints = [], on
         {/* 渲染多个目标点标记 */}
         {targetPoints.map((point, index) => (
           <Marker key={index} position={[point.lat, point.lng]} icon={targetIcon}>
-            <Popup>目标点 {index + 1}</Popup>
+            <Popup>
+              <div className="font-medium">目标点 {index + 1}</div>
+              {point.address && <div className="text-xs text-gray-500 mt-1 max-w-[200px] truncate">{point.address}</div>}
+            </Popup>
           </Marker>
         ))}
 

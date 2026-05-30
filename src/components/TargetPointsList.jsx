@@ -20,11 +20,17 @@ const TargetPointsList = ({ targetPoints, onRemove }) => {
       <div className="space-y-3">
         {targetPoints.map((point, index) => (
           <div key={index} className="flex items-center justify-between bg-white/60 border border-earth-100 rounded-xl p-3 shadow-sm">
-            <div>
-              <div className="text-earth-800 font-medium text-sm mb-1">目标点 {index + 1}</div>
-              <div className="text-earth-500 text-xs font-mono">
-                {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
-              </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-earth-800 text-sm">目标点 {index + 1}</h3>
+              {point.address ? (
+                <p className="text-xs text-earth-500 mt-1 line-clamp-2" title={point.address}>
+                  {point.address}
+                </p>
+              ) : (
+                <p className="text-xs text-earth-500 mt-1 font-mono">
+                  {point.lat.toFixed(4)}, {point.lng.toFixed(4)}
+                </p>
+              )}
             </div>
             <button
               onClick={() => onRemove(index)}
