@@ -8,6 +8,9 @@ import React from 'react';
 const StatusBar = ({ locationData, season = '春日季', showReminder = true }) => {
   const { city, temp, weather, loading, error } = locationData || {};
 
+  // 检查是否为周日
+  const isSunday = new Date().getDay() === 0;
+
   const renderLocationInfo = () => {
     if (loading) {
       return <span className="text-earth-500 font-medium text-sm animate-pulse">定位中...</span>;
@@ -47,12 +50,12 @@ const StatusBar = ({ locationData, season = '春日季', showReminder = true }) 
       </div>
       
       {/* 别克E5周日移动提醒 */}
-      {showReminder && (
-        <div className="bg-terracotta/10 rounded-lg p-2 flex items-center gap-2 mt-1">
-          <svg className="w-4 h-4 text-terracotta shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      {showReminder && isSunday && (
+        <div className="flex items-center space-x-2 text-terracotta bg-terracotta/10 px-3 py-1.5 rounded-full mt-1">
+          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
-          <span className="text-terracotta text-xs font-medium leading-tight">
+          <span className="text-xs font-medium leading-tight">
             别克E5周日移动提醒：请安排拔营/城市移动
           </span>
         </div>

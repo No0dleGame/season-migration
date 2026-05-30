@@ -34,8 +34,9 @@ function MapClickHandler({ onMapClick }) {
  * 旅游地图组件
  * @param {Object} props
  * @param {Object} props.currentLocation - 当前位置坐标 {lat, lon}
+ * @param {string} props.role - 当前用户角色
  */
-export default function TravelMap({ currentLocation }) {
+export default function TravelMap({ currentLocation, role }) {
   // 本地 state 保存下一站的坐标 {lat, lng}
   const [nextDestination, setNextDestination] = useState(null);
 
@@ -92,8 +93,8 @@ export default function TravelMap({ currentLocation }) {
           </Marker>
         )}
 
-        {/* 绑定点击事件，通过 MapClickHandler 将点击坐标传递出来 */}
-        <MapClickHandler onMapClick={handleMapClick} />
+        {/* 只有当 role 为 'admin' 时绑定点击事件，通过 MapClickHandler 将点击坐标传递出来 */}
+        {role === 'admin' && <MapClickHandler onMapClick={handleMapClick} />}
       </MapContainer>
     </div>
   );

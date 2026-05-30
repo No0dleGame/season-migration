@@ -81,10 +81,9 @@ function App() {
   /**
    * 登录成功的回调处理函数
    */
-  const handleLoginSuccess = () => {
-    const status = storage.getLoginStatus();
+  const handleLoginSuccess = (userRole) => {
     setIsLoggedIn(true);
-    setRole(status);
+    setRole(userRole);
     loadPunchData();
   };
 
