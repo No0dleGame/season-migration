@@ -35,7 +35,7 @@ const GameCheckIn = ({ initialHours = 0, goalHours = 4, onCheckIn }) => {
   const progress = Math.min((hours / goalHours) * 100, 100);
 
   return (
-    <div className="bg-earth-50 rounded-2xl p-5 shadow-sm border border-earth-200 max-w-md mx-auto">
+    <div className="bg-earth-50 rounded-2xl p-5 shadow-sm border border-earth-200">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-forest font-bold text-lg flex items-center gap-2">
           <svg className="w-5 h-5 text-olive" fill="none" viewBox="0 0 24 24" stroke="currentColor">

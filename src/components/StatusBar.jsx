@@ -7,7 +7,7 @@ import React from 'react';
  */
 const StatusBar = ({ location = '云南·大理', season = '春日季', showReminder = true }) => {
   return (
-    <div className="bg-earth-100 px-4 py-3 shadow-sm flex flex-col gap-2 rounded-b-2xl max-w-md mx-auto">
+    <div className="bg-earth-100 px-4 py-3 shadow-sm flex flex-col gap-2 rounded-2xl">
       <div className="flex justify-between items-center">
         {/* 当前所在地 */}
         <div className="flex items-center gap-1.5">
