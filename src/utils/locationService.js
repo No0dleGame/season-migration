@@ -58,6 +58,35 @@ export const getCityName = async (lat, lon) => {
 };
 
 /**
+ * 根据经纬度获取详细地址
+ * 调用 OpenStreetMap Nominatim 接口进行逆地理编码
+ * @param {number} lat - 纬度
+ * @param {number} lon - 经度
+ * @returns {Promise<string>} 返回详细地址
+ */
+export const getAddressDetail = async (lat, lon) => {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=14&addressdetails=1`;
+    const response = await fetch(url, {
+      headers: {
+        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'User-Agent': 'SeasonMigrationApp/1.0',
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.display_name || '未知地址';
+  } catch (error) {
+    console.error('获取详细地址失败:', error);
+    return '未知地址';
+  }
+};
+
+/**
  * 天气代码映射表 (WMO Weather interpretation codes)
  * 根据 Open-Meteo 官方文档映射为中文描述
  */

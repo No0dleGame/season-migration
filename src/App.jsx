@@ -7,7 +7,7 @@ import Timeline from './components/Timeline'
 import TravelMap from './components/TravelMap'
 import TargetPointsList from './components/TargetPointsList'
 import { storage } from './utils/storage'
-import { getCurrentPosition, getCityName, getWeather } from './utils/locationService'
+import { getCurrentPosition, getCityName, getWeather, getAddressDetail } from './utils/locationService'
 
 function App() {
   // 定义登录状态，默认为 false
