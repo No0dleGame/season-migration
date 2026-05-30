@@ -53,9 +53,16 @@ function MapCenterUpdater({ center }) {
  */
 function MapClickHandler({ onMapClick }) {
   useMapEvents({
-    click(e) {
-      onMapClick(e.latlng);
+    mouseup(e) {
+      // e.originalEvent.button === 1 代表鼠标中键（滚轮点击）
+      if (e.originalEvent.button === 1) {
+        onMapClick(e.latlng);
+      }
     },
+    contextmenu(e) {
+      // 监听右键或移动端长按，兼顾手机端选点体验
+      onMapClick(e.latlng);
+    }
   });
   return null; // 该组件只负责监听事件，不渲染任何 DOM
 }
