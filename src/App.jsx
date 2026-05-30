@@ -5,6 +5,7 @@ import GameCheckIn from './components/GameCheckIn'
 import LocationCheckIn from './components/LocationCheckIn'
 import Timeline from './components/Timeline'
 import TravelMap from './components/TravelMap'
+import TargetPointsList from './components/TargetPointsList'
 import { storage } from './utils/storage'
 import { getCurrentPosition, getCityName, getWeather } from './utils/locationService'
 
@@ -15,6 +16,8 @@ function App() {
   const [role, setRole] = useState(null);
   // 打卡数据状态
   const [punchData, setPunchData] = useState([]);
+  // 目标点数据状态
+  const [targetPoints, setTargetPoints] = useState([]);
   
   // 定位与天气状态
   const [locationData, setLocationData] = useState({
@@ -29,13 +32,14 @@ function App() {
   // 面板开关状态
   const [isPanelOpen, setIsPanelOpen] = useState(true);
 
-  // 组件挂载时检查本地存储中的登录状态并加载打卡数据
+  // 组件挂载时检查本地存储中的登录状态并加载打卡数据和目标点数据
   useEffect(() => {
     const status = storage.getLoginStatus();
     if (status) {
       setIsLoggedIn(true);
       setRole(status);
       loadPunchData();
+      loadTargetPoints();
     }
   }, []);
 
@@ -81,6 +85,26 @@ function App() {
     setPunchData(data);
   };
 
+  // 加载目标点数据
+  const loadTargetPoints = () => {
+    const points = storage.getTargetPoints();
+    setTargetPoints(points);
+  };
+
+  // 添加目标点
+  const handleAddTargetPoint = (coords) => {
+    const newPoints = [...targetPoints, coords];
+    setTargetPoints(newPoints);
+    storage.setTargetPoints(newPoints);
+  };
+
+  // 移除目标点
+  const handleRemoveTargetPoint = (index) => {
+    const newPoints = targetPoints.filter((_, i) => i !== index);
+    setTargetPoints(newPoints);
+    storage.setTargetPoints(newPoints);
+  };
+
   /**
    * 登录成功的回调处理函数
    */
@@ -88,6 +112,7 @@ function App() {
     setIsLoggedIn(true);
     setRole(userRole);
     loadPunchData();
+    loadTargetPoints();
   };
 
   /**
@@ -126,11 +151,23 @@ function App() {
         {role === 'admin' && (
           <>
             <GameCheckIn onCheckIn={loadPunchData} />
-            <LocationCheckIn onCheckIn={loadPunchData} defaultLocation={locationData.city} />
+            <LocationCheckIn 
+              onCheckIn={loadPunchData} 
+              defaultLocation={locationData.city}
+              onRefresh={() => fetchLocationAndWeather()}
+            />
           </>
         )}
         <Timeline punchData={punchData} />
       </div>
+
+      {/* 右侧目标点列表 */}
+      {role === 'admin' && (
+        <TargetPointsList 
+          targetPoints={targetPoints}
+          onRemove={handleRemoveTargetPoint}
+        />
+      )}
 
       {/* 移动端控制面板开关的 FAB 按钮 */}
       <button
@@ -141,7 +178,12 @@ function App() {
       </button>
 
       {/* 地图底层 */}
-      <TravelMap currentLocation={locationData.coords} role={role} />
+      <TravelMap 
+        currentLocation={locationData.coords} 
+        role={role} 
+        targetPoints={targetPoints}
+        onAddTarget={handleAddTargetPoint}
+      />
     </div>
   )
 }

@@ -1,0 +1,16 @@
+# Tasks
+- [x] Task 1: 存储与状态改造
+  - [x] SubTask 1.1: 在 `src/utils/storage.js` 中新增 `getTargetPoints` 和 `setTargetPoints` 方法（处理数组），并移除旧的 `getNextDestination`。
+  - [x] SubTask 1.2: 在 `App.jsx` 中增加 `targetPoints` 状态（默认从 storage 读取），并实现 `handleAddTargetPoint` 和 `handleRemoveTargetPoint` 方法。
+- [x] Task 2: 改造驻地打卡组件
+  - [x] SubTask 2.1: 在 `App.jsx` 中将 `fetchLocationAndWeather` 作为 `onRefresh` 属性传递给 `<LocationCheckIn />`。
+  - [x] SubTask 2.2: 修改 `LocationCheckIn.jsx`，删除输入框和下拉框，仅显示 `defaultLocation` 文本。
+  - [x] SubTask 2.3: 增加一个“刷新定位”的按钮，点击时调用 `onRefresh`。提交打卡时直接使用 `defaultLocation` 作为驻地名称，住宿类型设为默认值（或移除该字段展示）。
+- [x] Task 3: 地图支持多目标点
+  - [x] SubTask 3.1: 修改 `TravelMap.jsx`，接收 `targetPoints` 数组和 `onAddTarget` 回调。
+  - [x] SubTask 3.2: 遍历 `targetPoints` 渲染多个目标点 Marker。
+  - [x] SubTask 3.3: 地图点击事件调用 `onAddTarget` 而非内部直接替换。
+- [x] Task 4: 开发右侧目标点列表组件
+  - [x] SubTask 4.1: 新建 `src/components/TargetPointsList.jsx`，接收 `targetPoints` 和 `onRemove`。
+  - [x] SubTask 4.2: 渲染列表 UI，展示点位序号/坐标，并附带删除按钮。
+  - [x] SubTask 4.3: 在 `App.jsx` 中，若 `role === 'admin'`，在右侧（`absolute top-20 right-4`）悬浮渲染此组件。对于移动端，考虑适当的自适应布局或合并到控制面板。

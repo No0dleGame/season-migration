@@ -6,22 +6,13 @@ import { storage } from '../utils/storage';
  * 提供地点名称输入与营地/城市住宿选择功能
  * 采用自然人文风格，适配移动端
  */
-const LocationCheckIn = ({ onCheckIn, defaultLocation }) => {
-  const [locationName, setLocationName] = useState('');
-  const [accType, setAccType] = useState('camp'); // 住宿类型：'camp' 野外露营, 'city' 城市住宿
+const LocationCheckIn = ({ onCheckIn, defaultLocation, onRefresh }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // 当传入的 defaultLocation 发生变化时，如果当前没有输入内容，则更新输入框
-  useEffect(() => {
-    if (defaultLocation && !locationName) {
-      setLocationName(defaultLocation);
-    }
-  }, [defaultLocation]);
 
   // 处理表单提交
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (locationName.trim()) {
+    if (defaultLocation) {
       setIsSubmitted(true);
       
       // 保存到 localStorage
@@ -29,8 +20,8 @@ const LocationCheckIn = ({ onCheckIn, defaultLocation }) => {
       const newRecord = {
         id: Date.now().toString(),
         type: 'location',
-        location: locationName.trim(),
-        accType,
+        location: defaultLocation,
+        accType: 'current',
         timestamp: Date.now()
       };
       storage.setPunchData([...currentData, newRecord]);
@@ -45,8 +36,6 @@ const LocationCheckIn = ({ onCheckIn, defaultLocation }) => {
   // 重置表单
   const handleReset = () => {
     setIsSubmitted(false);
-    setLocationName(defaultLocation || '');
-    setAccType('camp');
   };
 
   return (
@@ -68,7 +57,7 @@ const LocationCheckIn = ({ onCheckIn, defaultLocation }) => {
           </div>
           <p className="text-earth-800 font-medium">驻地更新成功</p>
           <p className="text-earth-500 text-sm mt-1">
-            当前驻地：{locationName} ({accType === 'camp' ? '野外露营' : '城市住宿'})
+            当前驻地：{defaultLocation || '未知地点'}
           </p>
           <button 
             onClick={handleReset}
@@ -80,65 +69,32 @@ const LocationCheckIn = ({ onCheckIn, defaultLocation }) => {
       ) : (
         // 打卡表单
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-earth-700 text-sm font-medium mb-1">
-              地点名称
-            </label>
-            <input
-              type="text"
-              value={locationName}
-              onChange={(e) => setLocationName(e.target.value)}
-              placeholder="例如：大理洱海边"
-              className="w-full bg-white border border-earth-200 rounded-lg px-3 py-2 text-earth-800 placeholder-earth-400 focus:outline-none focus:border-olive focus:ring-1 focus:ring-olive transition-colors"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-earth-700 text-sm font-medium mb-2">
-              住宿类型
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              {/* 野外露营选择项 */}
-              <button
-                type="button"
-                onClick={() => setAccType('camp')}
-                className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
-                  accType === 'camp'
-                    ? 'border-olive bg-olive/10 text-olive'
-                    : 'border-earth-200 bg-white text-earth-500 hover:bg-earth-100'
-                }`}
-              >
-                <svg className="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                </svg>
-                <span className="text-sm font-medium">野外露营</span>
-              </button>
-              
-              {/* 城市住宿选择项 */}
-              <button
-                type="button"
-                onClick={() => setAccType('city')}
-                className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
-                  accType === 'city'
-                    ? 'border-terracotta bg-terracotta/10 text-terracotta'
-                    : 'border-earth-200 bg-white text-earth-500 hover:bg-earth-100'
-                }`}
-              >
-                <svg className="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                <span className="text-sm font-medium">城市住宿</span>
-              </button>
+          <div className="bg-white rounded-xl p-4 border border-earth-100 flex flex-col items-center justify-center space-y-2">
+            <div className="text-earth-500 text-sm">当前定位</div>
+            <div className="text-earth-800 font-bold text-lg">
+              {defaultLocation || '定位中...'}
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-earth-800 text-earth-50 rounded-lg py-2.5 font-medium hover:bg-earth-900 active:bg-earth-900/90 transition-colors"
-          >
-            确认更新
-          </button>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={onRefresh}
+              className="w-full bg-white text-earth-700 border border-earth-200 rounded-lg py-2.5 font-medium hover:bg-earth-50 transition-colors flex items-center justify-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              刷新定位
+            </button>
+            <button
+              type="submit"
+              disabled={!defaultLocation}
+              className="w-full bg-earth-800 text-earth-50 rounded-lg py-2.5 font-medium hover:bg-earth-900 active:bg-earth-900/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              打卡当前驻地
+            </button>
+          </div>
         </form>
       )}
     </div>

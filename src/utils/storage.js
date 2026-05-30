@@ -5,7 +5,7 @@
 
 const AUTH_KEY = 'app_auth_status';
 const PUNCH_DATA_KEY = 'app_punch_data';
-const NEXT_DESTINATION_KEY = 'app_next_destination';
+const TARGET_POINTS_KEY = 'app_target_points';
 
 export const storage = {
   // === 登录状态相关 ===
@@ -76,27 +76,27 @@ export const storage = {
     localStorage.removeItem(PUNCH_DATA_KEY);
   },
 
-  // === 地图下一站相关 ===
+  // === 地图目标点相关 ===
 
   /**
-   * 保存下一站坐标
-   * @param {Object} coords - {lat, lng} 对象
+   * 保存目标点数组
+   * @param {Array} points - [{lat, lng}, ...] 数组
    */
-  setNextDestination: (coords) => {
-    localStorage.setItem(NEXT_DESTINATION_KEY, JSON.stringify(coords));
+  setTargetPoints: (points) => {
+    localStorage.setItem(TARGET_POINTS_KEY, JSON.stringify(points));
   },
 
   /**
-   * 获取下一站坐标
-   * @returns {Object|null} {lat, lng} 对象，没有则返回 null
+   * 获取目标点数组
+   * @returns {Array} [{lat, lng}, ...] 数组，没有则返回空数组
    */
-  getNextDestination: () => {
+  getTargetPoints: () => {
     try {
-      const data = localStorage.getItem(NEXT_DESTINATION_KEY);
-      return data ? JSON.parse(data) : null;
+      const data = localStorage.getItem(TARGET_POINTS_KEY);
+      return data ? JSON.parse(data) : [];
     } catch (e) {
-      console.error('获取下一站坐标失败', e);
-      return null;
+      console.error('获取目标点坐标失败', e);
+      return [];
     }
   }
 };

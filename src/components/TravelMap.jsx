@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { storage } from '../utils/storage';
 
 // 修复 Leaflet 默认 marker 图标丢失的问题 (Vite/Webpack 环境常见问题)
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
@@ -24,9 +23,9 @@ const currentIcon = L.divIcon({
   iconAnchor: [10, 10],
 });
 
-// 自定义下一站图标 (陶土色)
-const nextIcon = L.divIcon({
-  className: 'custom-next-icon',
+// 自定义目标点图标 (陶土色)
+const targetIcon = L.divIcon({
+  className: 'custom-target-icon',
   html: `<div style="background-color: #e2725b; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.4);"></div>`,
   iconSize: [20, 20],
   iconAnchor: [10, 10],
@@ -66,29 +65,18 @@ function MapClickHandler({ onMapClick }) {
  * @param {Object} props
  * @param {Object} props.currentLocation - 当前位置坐标 {lat, lon}
  * @param {string} props.role - 当前用户角色
+ * @param {Array} props.targetPoints - 目标点数组
+ * @param {Function} props.onAddTarget - 添加目标点的回调函数
  */
-export default function TravelMap({ currentLocation, role }) {
-  // 本地 state 保存下一站的坐标 {lat, lng}
-  const [nextDestination, setNextDestination] = useState(null);
-
-  // 组件挂载时，从 storage 初始化下一站数据
-  useEffect(() => {
-    const savedDest = storage.getNextDestination();
-    if (savedDest) {
-      setNextDestination(savedDest);
-    }
-  }, []);
-
+export default function TravelMap({ currentLocation, role, targetPoints = [], onAddTarget }) {
   /**
    * 处理地图点击事件
    * @param {Object} latlng - 包含 lat 和 lng 的坐标对象
    */
   const handleMapClick = (latlng) => {
-    const coords = { lat: latlng.lat, lng: latlng.lng };
-    // 1. 更新本地 state，以便在地图上显示标记
-    setNextDestination(coords);
-    // 2. 调用 storage 存储下一站，实现数据持久化
-    storage.setNextDestination(coords);
+    if (onAddTarget) {
+      onAddTarget({ lat: latlng.lat, lng: latlng.lng });
+    }
   };
 
   // 默认中心点：如果有当前位置则使用，否则使用默认坐标 (如北京天安门附近)
@@ -120,12 +108,12 @@ export default function TravelMap({ currentLocation, role }) {
           </Marker>
         )}
 
-        {/* 渲染点击生成的下一站标记 */}
-        {nextDestination?.lat && nextDestination?.lng && (
-          <Marker position={[nextDestination.lat, nextDestination.lng]} icon={nextIcon}>
-            <Popup>下一站</Popup>
+        {/* 渲染多个目标点标记 */}
+        {targetPoints.map((point, index) => (
+          <Marker key={index} position={[point.lat, point.lng]} icon={targetIcon}>
+            <Popup>目标点 {index + 1}</Popup>
           </Marker>
-        )}
+        ))}
 
         {/* 只有当 role 为 'admin' 时绑定点击事件，通过 MapClickHandler 将点击坐标传递出来 */}
         {role === 'admin' && <MapClickHandler onMapClick={handleMapClick} />}
