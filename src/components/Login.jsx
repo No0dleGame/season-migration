@@ -2,31 +2,39 @@ import React, { useState } from 'react';
 import { storage } from '../utils/storage';
 
 /**
- * 单密码登录组件
+ * 密码登录组件
  * @param {Object} props
- * @param {Function} props.onLoginSuccess - 登录成功后的回调函数
+ * @param {Function} props.onLoginSuccess - 登录成功后的回调函数，传入角色标识
  */
 const Login = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // 设置一个固定的系统访问密码
-  const SYSTEM_PASSWORD = '19991123'; 
+  // 定义不同角色的访问密码
+  const ADMIN_PASSWORD = '19991123'; 
+  const VIEWER_PASSWORD = '12345678';
 
   /**
-   * 处理登录提交事件
+   * 处理密码输入事件，实时校验
    */
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (password === SYSTEM_PASSWORD) {
-      // 密码正确，保存登录状态
-      storage.setLoginStatus(true);
-      setError('');
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    setError('');
+
+    // 实时判断密码，如果匹配则触发登录成功逻辑
+    if (value === ADMIN_PASSWORD) {
+      storage.setLoginStatus('admin');
       if (onLoginSuccess) {
-        onLoginSuccess();
+        onLoginSuccess('admin');
       }
-    } else {
-      // 密码错误，显示提示信息
+    } else if (value === VIEWER_PASSWORD) {
+      storage.setLoginStatus('viewer');
+      if (onLoginSuccess) {
+        onLoginSuccess('viewer');
+      }
+    } else if (value.length >= 8) {
+      // 密码长度达到8位仍不匹配时，提示错误
       setError('密码错误，请重试');
     }
   };
@@ -37,7 +45,7 @@ const Login = ({ onLoginSuccess }) => {
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           系统登录
         </h2>
-        <form onSubmit={handleLogin} className="space-y-5">
+        <div className="space-y-5">
           <div>
             <label 
               htmlFor="password" 
@@ -49,7 +57,8 @@ const Login = ({ onLoginSuccess }) => {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
+              placeholder="请输入访问密码"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               required
             />
@@ -61,14 +70,7 @@ const Login = ({ onLoginSuccess }) => {
               {error}
             </p>
           )}
-          
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            进入系统
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );

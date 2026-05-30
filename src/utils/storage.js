@@ -12,20 +12,26 @@ export const storage = {
   
   /**
    * 设置登录状态
-   * @param {boolean} status - 是否已登录
+   * @param {string} role - 角色标识 ('admin' | 'viewer')
    */
-  setLoginStatus: (status) => {
-    localStorage.setItem(AUTH_KEY, JSON.stringify(status));
+  setLoginStatus: (role) => {
+    localStorage.setItem(AUTH_KEY, JSON.stringify(role));
   },
 
   /**
    * 获取登录状态
-   * @returns {boolean} 当前登录状态
+   * @returns {string|boolean} 当前登录角色，未登录返回 false
    */
   getLoginStatus: () => {
     try {
       const status = localStorage.getItem(AUTH_KEY);
-      return status ? JSON.parse(status) : false;
+      if (!status) return false;
+      const parsed = JSON.parse(status);
+      // 兼容旧版本的 true 值，将其当作 'admin' 处理
+      if (parsed === true || parsed === 'true') {
+        return 'admin';
+      }
+      return parsed;
     } catch (e) {
       console.error('获取登录状态失败', e);
       return false;

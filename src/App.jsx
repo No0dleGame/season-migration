@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { Leaf, Sun, Wind, Compass } from 'lucide-react'
 import Login from './components/Login'
 import StatusBar from './components/StatusBar'
 import GameCheckIn from './components/GameCheckIn'
@@ -12,6 +11,8 @@ import { getCurrentPosition, getCityName, getWeather } from './utils/locationSer
 function App() {
   // 定义登录状态，默认为 false
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // 定义角色状态
+  const [role, setRole] = useState(null);
   // 打卡数据状态
   const [punchData, setPunchData] = useState([]);
   
@@ -28,9 +29,9 @@ function App() {
   // 组件挂载时检查本地存储中的登录状态并加载打卡数据
   useEffect(() => {
     const status = storage.getLoginStatus();
-    setIsLoggedIn(status);
-    
     if (status) {
+      setIsLoggedIn(true);
+      setRole(status);
       loadPunchData();
     }
   }, []);
@@ -81,7 +82,9 @@ function App() {
    * 登录成功的回调处理函数
    */
   const handleLoginSuccess = () => {
+    const status = storage.getLoginStatus();
     setIsLoggedIn(true);
+    setRole(status);
     loadPunchData();
   };
 
@@ -91,6 +94,7 @@ function App() {
   const handleLogout = () => {
     storage.clearLoginStatus();
     setIsLoggedIn(false);
+    setRole(null);
   };
 
   // 如果未登录，则渲染登录组件，并传入登录成功的回调
