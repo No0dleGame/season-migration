@@ -110,40 +110,28 @@ function App() {
           <div className="space-y-6">
             <StatusBar locationData={locationData} season="春日季" showReminder={true} />
             
-            <div className="bg-white rounded-2xl shadow-sm border border-earth-100 p-8 text-center relative">
-              {/* 退出登录按钮 */}
+            <div className="flex justify-end mb-2">
               <button 
                 onClick={handleLogout}
-                className="absolute top-4 right-4 text-sm font-medium text-gray-400 hover:text-terracotta transition-colors"
+                className="text-sm font-medium text-earth-600 hover:text-terracotta transition-colors bg-white px-4 py-2 rounded-full shadow-sm border border-earth-100"
                 title="退出登录"
               >
-                退出
+                退出登录
               </button>
-
-              <div className="flex justify-center space-x-4 mb-6 text-terracotta">
-                <Leaf className="w-6 h-6" />
-                <Sun className="w-6 h-6" />
-                <Wind className="w-6 h-6" />
-                <Compass className="w-6 h-6" />
-              </div>
-              
-              <h1 className="text-2xl font-bold mb-3 text-earth-800 tracking-wider">
-                Season Migration
-              </h1>
-              
-              <p className="text-sm text-earth-600 leading-relaxed">
-                大地色系自然人文风格模板已就绪。
-              </p>
             </div>
 
-            <GameCheckIn onCheckIn={loadPunchData} />
-            <LocationCheckIn onCheckIn={loadPunchData} defaultLocation={locationData.city} />
+            {role === 'admin' && (
+              <>
+                <GameCheckIn onCheckIn={loadPunchData} />
+                <LocationCheckIn onCheckIn={loadPunchData} defaultLocation={locationData.city} />
+              </>
+            )}
           </div>
 
           {/* 右列：时间轴与地图 */}
           <div className="flex flex-col gap-6">
             <div className="order-2 md:order-1">
-              <TravelMap currentLocation={locationData.coords} />
+              <TravelMap currentLocation={locationData.coords} role={role} />
             </div>
             <div className="order-1 md:order-2">
               <Timeline punchData={punchData} />

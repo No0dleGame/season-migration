@@ -1,11 +1,11 @@
 # Tasks
-- [ ] Task 1: 认证逻辑与存储升级
-  - [ ] SubTask 1.1: 更新 `storage.js`，使 `setLoginStatus` 和 `getLoginStatus` 支持存储和返回角色字符串（如 `admin` 或 `viewer`）。
-  - [ ] SubTask 1.2: 改造 `Login.jsx`，在 `onChange` 事件中实时校验密码。如果等于 `19991123`，自动调用登录回调传 `admin`；如果等于 `12345678`，自动传 `viewer`。
-- [ ] Task 2: 界面精简与权限控制
-  - [ ] SubTask 2.1: 在 `App.jsx` 中接收并保存当前 `role` 状态。
-  - [ ] SubTask 2.2: 在 `App.jsx` 中删除无用的欢迎卡片模块，并将退出登录按钮重新安置在页面右上角。
-  - [ ] SubTask 2.3: 在 `App.jsx` 中，当 `role === 'viewer'` 时，隐藏 `<GameCheckIn />` 和 `<LocationCheckIn />` 组件。
-- [ ] Task 3: 组件细节优化
-  - [ ] SubTask 3.1: 将 `role` 传给 `<TravelMap />`，若是 `viewer` 则不绑定地图点击存储下一站的事件。
-  - [ ] SubTask 3.2: 修改 `StatusBar.jsx`，获取当天日期 `new Date().getDay()`，仅在等于 0（周日）时，才显示别克E5移动提醒。
+- [x] Task 1: 认证逻辑与存储升级
+  - [x] SubTask 1.1: 更新 `storage.js`，使 `setLoginStatus` 和 `getLoginStatus` 支持存储和返回角色字符串（如 `admin` 或 `viewer`）。
+  - [x] SubTask 1.2: 改造 `Login.jsx`，在 `onChange` 事件中实时校验密码。如果等于 `19991123`，自动调用登录回调传 `admin`；如果等于 `12345678`，自动传 `viewer`。
+- [x] Task 2: 界面精简与权限控制
+  - [x] SubTask 2.1: 在 `App.jsx` 中接收并保存当前 `role` 状态。
+  - [x] SubTask 2.2: 在 `App.jsx` 中删除无用的欢迎卡片模块，并将退出登录按钮重新安置在页面右上角。
+  - [x] SubTask 2.3: 在 `App.jsx` 中，当 `role === 'viewer'` 时，隐藏 `<GameCheckIn />` 和 `<LocationCheckIn />` 组件。
+- [x] Task 3: 组件细节优化
+  - [x] SubTask 3.1: 将 `role` 传给 `<TravelMap />`，若是 `viewer` 则不绑定地图点击存储下一站的事件。
+  - [x] SubTask 3.2: 修改 `StatusBar.jsx`，获取当天日期 `new Date().getDay()`，仅在等于 0（周日）时，才显示别克E5移动提醒。
