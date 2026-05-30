@@ -26,6 +26,9 @@ function App() {
     error: null
   });
 
+  // 面板开关状态
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
+
   // 组件挂载时检查本地存储中的登录状态并加载打卡数据
   useEffect(() => {
     const status = storage.getLoginStatus();
@@ -103,42 +106,42 @@ function App() {
 
   // 已登录状态，渲染主界面
   return (
-    <div className="min-h-screen bg-earth-50 relative overflow-y-auto pb-8">
-      <div className="w-full mx-auto px-4 mt-6 md:max-w-5xl max-w-md">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* 左列：状态栏与打卡功能 */}
-          <div className="space-y-6">
-            <StatusBar locationData={locationData} season="春日季" showReminder={true} />
-            
-            <div className="flex justify-end mb-2">
-              <button 
-                onClick={handleLogout}
-                className="text-sm font-medium text-earth-600 hover:text-terracotta transition-colors bg-white px-4 py-2 rounded-full shadow-sm border border-earth-100"
-                title="退出登录"
-              >
-                退出登录
-              </button>
-            </div>
+    <div className="h-screen w-screen relative overflow-hidden bg-sand-50">
+      {/* 退出按钮 */}
+      <button 
+        onClick={handleLogout}
+        className="fixed top-4 right-4 z-50 text-sm font-medium text-earth-600 hover:text-terracotta transition-colors bg-white/80 backdrop-blur-md px-4 py-2 rounded-full shadow-sm border border-earth-100"
+        title="退出登录"
+      >
+        退出
+      </button>
 
-            {role === 'admin' && (
-              <>
-                <GameCheckIn onCheckIn={loadPunchData} />
-                <LocationCheckIn onCheckIn={loadPunchData} defaultLocation={locationData.city} />
-              </>
-            )}
-          </div>
-
-          {/* 右列：时间轴与地图 */}
-          <div className="flex flex-col gap-6">
-            <div className="order-2 md:order-1">
-              <TravelMap currentLocation={locationData.coords} role={role} />
-            </div>
-            <div className="order-1 md:order-2">
-              <Timeline punchData={punchData} />
-            </div>
-          </div>
-        </div>
+      {/* StatusBar */}
+      <div className="absolute top-4 left-4 z-40">
+        <StatusBar locationData={locationData} season="春日季" showReminder={true} />
       </div>
+
+      {/* 左侧可折叠面板 */}
+      <div className={`absolute top-20 left-4 w-[calc(100vw-2rem)] md:w-96 max-h-[calc(100vh-6rem)] overflow-y-auto z-40 bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-4 space-y-6 transition-transform duration-300 ${isPanelOpen ? 'translate-x-0' : '-translate-x-[120%]'}`}>
+        {role === 'admin' && (
+          <>
+            <GameCheckIn onCheckIn={loadPunchData} />
+            <LocationCheckIn onCheckIn={loadPunchData} defaultLocation={locationData.city} />
+          </>
+        )}
+        <Timeline punchData={punchData} />
+      </div>
+
+      {/* 移动端控制面板开关的 FAB 按钮 */}
+      <button
+        onClick={() => setIsPanelOpen(!isPanelOpen)}
+        className="fixed bottom-6 right-6 z-50 md:hidden w-12 h-12 bg-emerald-500 text-white rounded-full shadow-lg flex items-center justify-center text-xl hover:bg-emerald-600 transition-colors"
+      >
+        {isPanelOpen ? '✕' : '☰'}
+      </button>
+
+      {/* 地图底层 */}
+      <TravelMap currentLocation={locationData.coords} role={role} />
     </div>
   )
 }

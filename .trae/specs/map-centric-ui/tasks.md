@@ -1,0 +1,12 @@
+# Tasks
+- [x] Task 1: 地图全屏化改造
+  - [x] SubTask 1.1: 修改 `src/components/TravelMap.jsx`，去除 `rounded-2xl`, `border-2`, `h-64`, `md:h-96` 等限制，将其容器设置为 `w-full h-full`。
+  - [x] SubTask 1.2: 修改 `App.jsx` 根节点，从 `min-h-screen bg-sand-50 py-8` 改为 `h-screen w-screen relative overflow-hidden bg-sand-50`。
+  - [x] SubTask 1.3: 将 `TravelMap` 置于 `App.jsx` 的底层（`absolute inset-0 z-0`）。
+- [x] Task 2: 状态栏与控制按钮悬浮
+  - [x] SubTask 2.1: 在 `App.jsx` 中，将 `<StatusBar />` 包装在 `absolute top-4 left-4 z-10` 容器中。
+  - [x] SubTask 2.2: 将退出按钮置于 `absolute top-4 right-4 z-10`。
+- [x] Task 3: 悬浮功能面板（打卡与足迹）
+  - [x] SubTask 3.1: 在 `App.jsx` 中添加一个 `isPanelOpen` 状态（默认在 PC 上为 true，移动端可控制）。
+  - [x] SubTask 3.2: 创建一个悬浮面板容器（绝对定位，带有毛玻璃背景 `bg-white/80 backdrop-blur-md`，圆角和阴影），放入 `GameCheckIn`、`LocationCheckIn` 和 `Timeline`。
+  - [x] SubTask 3.3: 适配移动端：增加一个悬浮按钮用于在移动端切换面板的显示与隐藏，设置面板的最大高度（`max-h-[calc(100vh-8rem)]`）以允许内部滚动。

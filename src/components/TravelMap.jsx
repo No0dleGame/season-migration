@@ -67,7 +67,7 @@ export default function TravelMap({ currentLocation, role }) {
 
   return (
     // 使用自然色系 (emerald-100) 边框、大圆角和柔和阴影适配整体 UI 风格
-    <div className="w-full h-64 md:h-96 rounded-2xl overflow-hidden border-2 border-emerald-100 shadow-sm relative z-0">
+    <div className="w-full h-full absolute inset-0 z-0">
       <MapContainer 
         center={defaultCenter} 
         zoom={13} 
