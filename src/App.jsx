@@ -5,6 +5,7 @@ import StatusBar from './components/StatusBar'
 import GameCheckIn from './components/GameCheckIn'
 import LocationCheckIn from './components/LocationCheckIn'
 import Timeline from './components/Timeline'
+import TravelMap from './components/TravelMap'
 import { storage } from './utils/storage'
 import { getCurrentPosition, getCityName, getWeather } from './utils/locationService'
 
@@ -19,6 +20,7 @@ function App() {
     city: '',
     temp: '',
     weather: '',
+    coords: null,
     loading: false,
     error: null
   });
@@ -56,6 +58,7 @@ function App() {
         city: city,
         temp: `${weather.temperature}°C`,
         weather: weather.description,
+        coords: { lat, lon },
         loading: false,
         error: null
       });
@@ -134,9 +137,14 @@ function App() {
             <LocationCheckIn onCheckIn={loadPunchData} defaultLocation={locationData.city} />
           </div>
 
-          {/* 右列：时间轴 */}
-          <div className="space-y-6">
-            <Timeline punchData={punchData} />
+          {/* 右列：时间轴与地图 */}
+          <div className="flex flex-col gap-6">
+            <div className="order-2 md:order-1">
+              <TravelMap currentLocation={locationData.coords} />
+            </div>
+            <div className="order-1 md:order-2">
+              <Timeline punchData={punchData} />
+            </div>
           </div>
         </div>
       </div>

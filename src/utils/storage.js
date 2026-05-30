@@ -5,6 +5,7 @@
 
 const AUTH_KEY = 'app_auth_status';
 const PUNCH_DATA_KEY = 'app_punch_data';
+const NEXT_DESTINATION_KEY = 'app_next_destination';
 
 export const storage = {
   // === 登录状态相关 ===
@@ -67,5 +68,29 @@ export const storage = {
    */
   clearPunchData: () => {
     localStorage.removeItem(PUNCH_DATA_KEY);
+  },
+
+  // === 地图下一站相关 ===
+
+  /**
+   * 保存下一站坐标
+   * @param {Object} coords - {lat, lng} 对象
+   */
+  setNextDestination: (coords) => {
+    localStorage.setItem(NEXT_DESTINATION_KEY, JSON.stringify(coords));
+  },
+
+  /**
+   * 获取下一站坐标
+   * @returns {Object|null} {lat, lng} 对象，没有则返回 null
+   */
+  getNextDestination: () => {
+    try {
+      const data = localStorage.getItem(NEXT_DESTINATION_KEY);
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      console.error('获取下一站坐标失败', e);
+      return null;
+    }
   }
 };

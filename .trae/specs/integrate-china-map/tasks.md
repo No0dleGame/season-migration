@@ -1,0 +1,11 @@
+# Tasks
+- [x] Task 1: 依赖安装与存储扩展
+  - [x] SubTask 1.1: 安装 `leaflet` 和 `react-leaflet` 依赖。
+  - [x] SubTask 1.2: 在 `storage.js` 中新增对“下一站目标位置 (nextDestination)”的读写方法。
+- [x] Task 2: 开发地图组件
+  - [x] SubTask 2.1: 在 `src/components` 下创建 `TravelMap.jsx`，引入 Leaflet 样式。
+  - [x] SubTask 2.2: 实现地图渲染，支持接收当前位置（`currentLocation`）并以不同样式/图标显示当前标记。
+  - [x] SubTask 2.3: 实现地图点击事件（`useMapEvents`），点击时记录坐标，更新“下一站”标记，并调用 `storage` 保存。
+- [x] Task 3: 页面集成与布局调整
+  - [x] SubTask 3.1: 在 `App.jsx` 中引入 `TravelMap` 组件。
+  - [x] SubTask 3.2: 调整布局，将地图组件与原有的 `Timeline`（时间轴）组合放置在展示区域中，确保移动端和PC端的高度/宽度适配合理。
