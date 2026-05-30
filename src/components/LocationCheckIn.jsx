@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { storage } from '../utils/storage';
 
 /**
@@ -6,10 +6,17 @@ import { storage } from '../utils/storage';
  * 提供地点名称输入与营地/城市住宿选择功能
  * 采用自然人文风格，适配移动端
  */
-const LocationCheckIn = ({ onCheckIn }) => {
+const LocationCheckIn = ({ onCheckIn, defaultLocation }) => {
   const [locationName, setLocationName] = useState('');
   const [accType, setAccType] = useState('camp'); // 住宿类型：'camp' 野外露营, 'city' 城市住宿
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // 当传入的 defaultLocation 发生变化时，如果当前没有输入内容，则更新输入框
+  useEffect(() => {
+    if (defaultLocation && !locationName) {
+      setLocationName(defaultLocation);
+    }
+  }, [defaultLocation]);
 
   // 处理表单提交
   const handleSubmit = (e) => {
@@ -38,7 +45,7 @@ const LocationCheckIn = ({ onCheckIn }) => {
   // 重置表单
   const handleReset = () => {
     setIsSubmitted(false);
-    setLocationName('');
+    setLocationName(defaultLocation || '');
     setAccType('camp');
   };
 

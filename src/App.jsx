@@ -6,12 +6,22 @@ import GameCheckIn from './components/GameCheckIn'
 import LocationCheckIn from './components/LocationCheckIn'
 import Timeline from './components/Timeline'
 import { storage } from './utils/storage'
+import { getCurrentPosition, getCityName, getWeather } from './utils/locationService'
 
 function App() {
   // 定义登录状态，默认为 false
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   // 打卡数据状态
   const [punchData, setPunchData] = useState([]);
+  
+  // 定位与天气状态
+  const [locationData, setLocationData] = useState({
+    city: '',
+    temp: '',
+    weather: '',
+    loading: false,
+    error: null
+  });
 
   // 组件挂载时检查本地存储中的登录状态并加载打卡数据
   useEffect(() => {
@@ -22,6 +32,41 @@ function App() {
       loadPunchData();
     }
   }, []);
+
+  // 当登录状态变为 true 时，获取定位和天气
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchLocationAndWeather();
+    }
+  }, [isLoggedIn]);
+
+  // 获取定位和天气数据
+  const fetchLocationAndWeather = async () => {
+    setLocationData(prev => ({ ...prev, loading: true, error: null }));
+    try {
+      // 请求浏览器定位权限
+      const { lat, lon } = await getCurrentPosition();
+      // 并行请求城市名称和天气数据以提升速度
+      const [city, weather] = await Promise.all([
+        getCityName(lat, lon),
+        getWeather(lat, lon)
+      ]);
+      
+      setLocationData({
+        city: city,
+        temp: `${weather.temperature}°C`,
+        weather: weather.description,
+        loading: false,
+        error: null
+      });
+    } catch (err) {
+      setLocationData(prev => ({
+        ...prev,
+        loading: false,
+        error: err.message || '获取定位失败'
+      }));
+    }
+  };
 
   // 加载打卡数据
   const loadPunchData = () => {
@@ -57,7 +102,7 @@ function App() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* 左列：状态栏与打卡功能 */}
           <div className="space-y-6">
-            <StatusBar location="云南·大理" season="春日季" showReminder={true} />
+            <StatusBar locationData={locationData} season="春日季" showReminder={true} />
             
             <div className="bg-white rounded-2xl shadow-sm border border-earth-100 p-8 text-center relative">
               {/* 退出登录按钮 */}
@@ -86,7 +131,7 @@ function App() {
             </div>
 
             <GameCheckIn onCheckIn={loadPunchData} />
-            <LocationCheckIn onCheckIn={loadPunchData} />
+            <LocationCheckIn onCheckIn={loadPunchData} defaultLocation={locationData.city} />
           </div>
 
           {/* 右列：时间轴 */}

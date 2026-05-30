@@ -5,7 +5,26 @@ import React from 'react';
  * 展示当前所在地、季节提示以及别克E5周日移动提醒
  * 采用自然人文风格，适配移动端
  */
-const StatusBar = ({ location = '云南·大理', season = '春日季', showReminder = true }) => {
+const StatusBar = ({ locationData, season = '春日季', showReminder = true }) => {
+  const { city, temp, weather, loading, error } = locationData || {};
+
+  const renderLocationInfo = () => {
+    if (loading) {
+      return <span className="text-earth-500 font-medium text-sm animate-pulse">定位中...</span>;
+    }
+    if (error) {
+      return <span className="text-red-500 font-medium text-sm" title={error}>定位失败</span>;
+    }
+    if (city) {
+      return (
+        <span className="text-earth-800 font-medium text-sm">
+          {city} {weather && temp ? `· ${weather} ${temp}` : ''}
+        </span>
+      );
+    }
+    return <span className="text-earth-500 font-medium text-sm">未知位置</span>;
+  };
+
   return (
     <div className="bg-earth-100 px-4 py-3 shadow-sm flex flex-col gap-2 rounded-2xl">
       <div className="flex justify-between items-center">
@@ -15,7 +34,7 @@ const StatusBar = ({ location = '云南·大理', season = '春日季', showRemi
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          <span className="text-earth-800 font-medium text-sm">{location}</span>
+          {renderLocationInfo()}
         </div>
         
         {/* 季节提示 */}
