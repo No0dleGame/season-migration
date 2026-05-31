@@ -1,0 +1,13 @@
+# Tasks
+- [x] Task 1: 文件移动与依赖准备
+  - [x] SubTask 1.1: 将 `床车一年全国迁徙计划.xlsx` 从根目录移动到 `public/床车一年全国迁徙计划.xlsx`。
+  - [x] SubTask 1.2: 在 `index.html` 中通过 CDN 引入 `xlsx` 库（如 `https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js`）。
+- [x] Task 2: Excel 解析逻辑
+  - [x] SubTask 2.1: 在 `src/App.jsx` 中编写 `handleImportExcel` 方法，使用 `fetch` 读取 public 下的 Excel 文件并用 `XLSX.read` 进行解析。
+  - [x] SubTask 2.2: 将解析出的第一张表转换为 JSON 数组，提取有用的列（如果找不到经纬度，可以将地址存入 `address` 并预留经纬度为默认值或稍后获取），组装成目标点数组并合并到现有状态中。
+- [x] Task 3: 目标点时间编辑功能
+  - [x] SubTask 3.1: 在 `src/App.jsx` 中增加 `handleUpdateTargetTime` 方法，用于更新指定索引目标点的 `estimatedTime` 字段，并持久化。
+- [x] Task 4: UI 更新
+  - [x] SubTask 4.1: 在 `src/components/TargetPointsList.jsx` 中增加“导入 Excel 计划”的按钮，点击触发导入逻辑。
+  - [x] SubTask 4.2: 在 `TargetPointsList.jsx` 的每个目标点卡片中，展示 `estimatedTime`，并提供一个 `<input type="text" />` 或日期选择器来编辑该时间。
+  - [x] SubTask 4.3: 在 `src/components/TravelMap.jsx` 的弹出气泡（Popup）中，增加显示目标点的“预计时间”。

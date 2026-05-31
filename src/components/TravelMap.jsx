@@ -31,6 +31,14 @@ const targetIcon = L.divIcon({
   iconAnchor: [10, 10],
 });
 
+// 自定义已打卡目标点图标 (灰色)
+const checkedTargetIcon = L.divIcon({
+  className: 'custom-checked-target-icon',
+  html: `<div style="background-color: #9ca3af; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.4);"></div>`,
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+});
+
 /**
  * 监听地图中心更新的辅助组件
  * @param {Object} props
@@ -121,14 +129,25 @@ const TravelMap = ({ currentLocation, role, targetPoints = [], onAddTarget }) =>
         )}
 
         {/* 渲染多个目标点标记 */}
-        {targetPoints.map((point, index) => (
-          <Marker key={index} position={[point.lat, point.lng]} icon={targetIcon}>
-            <Popup>
-              <div className="font-medium">目标点 {index + 1}</div>
-              {point.address && <div className="text-xs text-gray-500 mt-1 max-w-[200px] truncate">{point.address}</div>}
-            </Popup>
-          </Marker>
-        ))}
+        {targetPoints.map((point, index) => {
+          const icon = point.checkedIn ? checkedTargetIcon : targetIcon;
+          return (
+            <Marker key={index} position={[point.lat, point.lng]} icon={icon}>
+              <Popup>
+                <div className="font-medium">
+                  {point.fromExcel ? 'Excel 计划点' : `目标点 ${index + 1}`}
+                  {point.checkedIn && <span className="text-xs text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded ml-2">已打卡</span>}
+                </div>
+                {point.address && <div className="text-xs text-gray-500 mt-1 max-w-[200px] truncate" title={point.address}>{point.address}</div>}
+                {point.estimatedTime && (
+                  <div className="text-xs text-emerald-600 mt-1 bg-emerald-50 px-2 py-0.5 rounded inline-block">
+                    预计时间: {point.estimatedTime}
+                  </div>
+                )}
+              </Popup>
+            </Marker>
+          );
+        })}
 
         {/* 只有当 role 为 'admin' 时绑定点击事件，通过 MapClickHandler 将点击坐标传递出来 */}
         {role === 'admin' && <MapClickHandler onMapClick={handleMapClick} />}

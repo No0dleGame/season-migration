@@ -103,6 +103,69 @@ function App() {
     });
   }, []);
 
+  // 切换目标点打卡状态
+  const handleToggleTargetPoint = useCallback((index) => {
+    setTargetPoints(prev => {
+      const newPoints = [...prev];
+      newPoints[index] = { ...newPoints[index], checkedIn: !newPoints[index].checkedIn };
+      storage.setTargetPoints(newPoints);
+      return newPoints;
+    });
+  }, []);
+
+  // 导入 Excel 计划
+  const handleImportExcel = useCallback(async () => {
+    if (!window.XLSX) {
+      alert('解析库尚未加载完毕，请稍后再试');
+      return;
+    }
+    try {
+      const response = await fetch('/床车一年全国迁徙计划.xlsx');
+      if (!response.ok) throw new Error('网络请求失败');
+      const arrayBuffer = await response.arrayBuffer();
+      const workbook = window.XLSX.read(arrayBuffer, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const data = window.XLSX.utils.sheet_to_json(worksheet);
+
+      const importedPoints = data.map((row, index) => {
+        const rowValues = Object.values(row);
+        const planName = row['周计划'] || row['计划'] || row['任务'] || rowValues[0] || `计划 ${index + 1}`;
+        const address = row['地点'] || row['位置'] || row['城市'] || rowValues[1] || rowValues[0] || '未知地点';
+        const estimatedTime = row['预计时间'] || row['时间'] || row['日期'] || '';
+        
+        return {
+          lat: 39.9042 + (Math.random() - 0.5) * 5, // 暂用随机坐标分布在周边
+          lng: 116.4074 + (Math.random() - 0.5) * 5,
+          address: `${planName} - ${address}`,
+          estimatedTime: estimatedTime,
+          checkedIn: false,
+          fromExcel: true
+        };
+      });
+
+      setTargetPoints(prev => {
+        const newPoints = [...prev, ...importedPoints];
+        storage.setTargetPoints(newPoints);
+        return newPoints;
+      });
+      alert(`成功导入 ${importedPoints.length} 个目标点！`);
+    } catch (error) {
+      console.error('导入 Excel 失败:', error);
+      alert('导入失败，请确保 public 目录下存在该文件且格式正确。');
+    }
+  }, []);
+
+  // 更新目标点时间
+  const handleUpdateTargetTime = useCallback((index, newTime) => {
+    setTargetPoints(prev => {
+      const newPoints = [...prev];
+      newPoints[index] = { ...newPoints[index], estimatedTime: newTime };
+      storage.setTargetPoints(newPoints);
+      return newPoints;
+    });
+  }, []);
+
   /**
    * 登录成功的回调处理函数
    */
@@ -165,6 +228,9 @@ function App() {
           <TargetPointsList 
             targetPoints={targetPoints}
             onRemove={handleRemoveTargetPoint}
+            onToggle={handleToggleTargetPoint}
+            onImportExcel={handleImportExcel}
+            onUpdateTime={handleUpdateTargetTime}
           />
         </div>
       )}
