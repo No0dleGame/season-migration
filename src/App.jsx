@@ -217,7 +217,7 @@ function App() {
       </div>
 
       {/* 左侧可折叠面板 */}
-      <div className={`absolute top-20 left-4 w-[calc(100vw-2rem)] md:w-96 max-h-[calc(100vh-6rem)] overflow-y-auto z-40 bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-4 space-y-6 transition-transform duration-300 ${isPanelOpen ? 'translate-x-0' : '-translate-x-[120%]'}`}>
+      <div className={`absolute top-16 left-4 w-[calc(100vw-2rem)] md:w-80 max-h-[calc(100vh-5rem)] overflow-y-auto z-40 bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-3 space-y-4 transition-transform duration-300 ${isPanelOpen ? 'translate-x-0' : '-translate-x-[120%]'}`}>
         {role === 'admin' && (
           <>
             <GameCheckIn onCheckIn={loadPunchData} />
@@ -233,7 +233,7 @@ function App() {
 
       {/* 右侧目标点列表 */}
       {role === 'admin' && (
-        <div className={`absolute top-20 right-4 z-30 md:z-40 w-[calc(100vw-2rem)] md:w-80 transition-opacity duration-300 ${isPanelOpen ? 'opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto' : 'opacity-100 pointer-events-auto'}`}>
+        <div className={`absolute top-16 right-4 z-30 md:z-40 w-[calc(100vw-2rem)] md:w-72 transition-opacity duration-300 ${isPanelOpen ? 'opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto' : 'opacity-100 pointer-events-auto'}`}>
           <TargetPointsList 
             targetPoints={targetPoints}
             onRemove={handleRemoveTargetPoint}

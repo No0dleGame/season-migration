@@ -35,27 +35,27 @@ const GameCheckIn = ({ initialHours = 0, goalHours = 4, onCheckIn }) => {
   const progress = Math.min((hours / goalHours) * 100, 100);
 
   return (
-    <div className="bg-earth-50 rounded-2xl p-5 shadow-sm border border-earth-200">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-forest font-bold text-lg flex items-center gap-2">
-          <svg className="w-5 h-5 text-olive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div className="bg-earth-50 rounded-xl p-4 shadow-sm border border-earth-200">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-forest font-bold text-base flex items-center gap-1.5">
+          <svg className="w-4 h-4 text-olive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
           </svg>
           游戏开发修行
         </h3>
-        <span className="text-earth-600 text-sm font-medium">{hours} / {goalHours} 小时</span>
+        <span className="text-earth-600 text-xs font-medium">{hours} / {goalHours} 小时</span>
       </div>
       
       {/* 进度条 */}
-      <div className="w-full bg-sand rounded-full h-3 mb-5 overflow-hidden">
+      <div className="w-full bg-sand rounded-full h-2 mb-4 overflow-hidden">
         <div 
-          className="bg-olive h-3 rounded-full transition-all duration-500 ease-in-out" 
+          className="bg-olive h-2 rounded-full transition-all duration-500 ease-in-out" 
           style={{ width: `${progress}%` }}
         ></div>
       </div>
       
       <div className="flex justify-between items-center">
-        <p className="text-earth-500 text-xs">
+        <p className="text-earth-500 text-[10px]">
           {hours >= goalHours ? '今日目标已达成，做得好！' : '专注当下，静心编码。'}
         </p>
         
@@ -63,7 +63,7 @@ const GameCheckIn = ({ initialHours = 0, goalHours = 4, onCheckIn }) => {
         <button 
           onClick={handleCheckIn}
           disabled={hours >= goalHours}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
             hours >= goalHours 
               ? 'bg-earth-200 text-earth-400 cursor-not-allowed'
               : 'bg-forest text-earth-50 hover:bg-olive active:bg-olive/90'

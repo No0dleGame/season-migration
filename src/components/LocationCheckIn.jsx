@@ -39,50 +39,50 @@ const LocationCheckIn = ({ onCheckIn, defaultLocation, onRefresh }) => {
   };
 
   return (
-    <div className="bg-earth-50 rounded-2xl p-5 shadow-sm border border-earth-200">
-      <div className="flex items-center gap-2 mb-4">
-        <svg className="w-5 h-5 text-terracotta" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div className="bg-earth-50 rounded-xl p-4 shadow-sm border border-earth-200">
+      <div className="flex items-center gap-1.5 mb-3">
+        <svg className="w-4 h-4 text-terracotta" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
         </svg>
-        <h3 className="text-forest font-bold text-lg">行程驻地</h3>
+        <h3 className="text-forest font-bold text-base">行程驻地</h3>
       </div>
 
       {isSubmitted ? (
         // 打卡成功状态展示
-        <div className="text-center py-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-olive/10 mb-3">
-            <svg className="w-6 h-6 text-olive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="text-center py-4">
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-olive/10 mb-2">
+            <svg className="w-5 h-5 text-olive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <p className="text-earth-800 font-medium">驻地更新成功</p>
-          <p className="text-earth-500 text-sm mt-1">
+          <p className="text-earth-800 font-medium text-sm">驻地更新成功</p>
+          <p className="text-earth-500 text-xs mt-1">
             当前驻地：{defaultLocation || '未知地点'}
           </p>
           <button 
             onClick={handleReset}
-            className="mt-4 text-terracotta text-sm underline underline-offset-4"
+            className="mt-3 text-terracotta text-xs underline underline-offset-4"
           >
             新地点打卡
           </button>
         </div>
       ) : (
         // 打卡表单
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="bg-white rounded-xl p-4 border border-earth-100 flex flex-col items-center justify-center space-y-2">
-            <div className="text-earth-500 text-sm">当前定位</div>
-            <div className="text-earth-800 font-bold text-lg">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="bg-white rounded-xl p-3 border border-earth-100 flex flex-col items-center justify-center space-y-1.5">
+            <div className="text-earth-500 text-[10px]">当前定位</div>
+            <div className="text-earth-800 font-bold text-sm text-center line-clamp-2">
               {defaultLocation || '定位中...'}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={onRefresh}
-              className="w-full bg-white text-earth-700 border border-earth-200 rounded-lg py-2.5 font-medium hover:bg-earth-50 transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-white text-earth-700 border border-earth-200 rounded-lg py-2 text-xs font-medium hover:bg-earth-50 transition-colors flex items-center justify-center gap-1.5"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
               刷新定位
@@ -90,7 +90,7 @@ const LocationCheckIn = ({ onCheckIn, defaultLocation, onRefresh }) => {
             <button
               type="submit"
               disabled={!defaultLocation}
-              className="w-full bg-earth-800 text-earth-50 rounded-lg py-2.5 font-medium hover:bg-earth-900 active:bg-earth-900/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-earth-800 text-earth-50 rounded-lg py-2 text-xs font-medium hover:bg-earth-900 active:bg-earth-900/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               打卡当前驻地
             </button>

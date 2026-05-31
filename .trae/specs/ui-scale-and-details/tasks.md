@@ -1,12 +1,12 @@
 # Tasks
-- [ ] Task 1: 详细定位数据层支持
-  - [ ] SubTask 1.1: 在 `src/hooks/useLocationAndWeather.js` 中增加获取详细地址（`getAddressDetail`）的逻辑，并存入 `locationData.detailedAddress`。
-- [ ] Task 2: 一键复制功能与详细地址 UI
-  - [ ] SubTask 2.1: 在 `src/components/StatusBar.jsx` 中显示 `detailedAddress`，并在其旁边添加复制按钮（SVG 图标 + `navigator.clipboard.writeText`）。
-  - [ ] SubTask 2.2: 在 `src/components/TargetPointsList.jsx` 中的目标点地址旁边添加复制按钮。
-- [ ] Task 3: 全局 UI 缩小
-  - [ ] SubTask 3.1: 调整 `src/App.jsx` 中的面板宽度（左侧 `w-96` 改为 `w-80` 或更小，右侧同理）。
-  - [ ] SubTask 3.2: 调整 `src/components/StatusBar.jsx` 的内边距和字号（`text-sm` -> `text-xs` 等）。
-  - [ ] SubTask 3.3: 调整 `src/components/TargetPointsList.jsx` 的内边距、字号和列表项的紧凑度。
-  - [ ] SubTask 3.4: 调整 `src/components/GameCheckIn.jsx` 和 `src/components/LocationCheckIn.jsx` 的输入框高度、间距和文字大小。
-  - [ ] SubTask 3.5: 调整 `src/components/Timeline.jsx` 的间距和文字大小。
+- [x] Task 1: 详细定位数据层支持
+  - [x] SubTask 1.1: 在 `src/hooks/useLocationAndWeather.js` 中增加获取详细地址（`getAddressDetail`）的逻辑，并存入 `locationData.detailedAddress`。
+- [x] Task 2: 一键复制功能与详细地址 UI
+  - [x] SubTask 2.1: 在 `src/components/StatusBar.jsx` 中显示 `detailedAddress`，并在其旁边添加复制按钮（SVG 图标 + `navigator.clipboard.writeText`）。
+  - [x] SubTask 2.2: 在 `src/components/TargetPointsList.jsx` 中的目标点地址旁边添加复制按钮。
+- [x] Task 3: 全局 UI 缩小
+  - [x] SubTask 3.1: 调整 `src/App.jsx` 中的面板宽度（左侧 `w-96` 改为 `w-80` 或更小，右侧同理）。
+  - [x] SubTask 3.2: 调整 `src/components/StatusBar.jsx` 的内边距和字号（`text-sm` -> `text-xs` 等）。
+  - [x] SubTask 3.3: 调整 `src/components/TargetPointsList.jsx` 的内边距、字号和列表项的紧凑度。
+  - [x] SubTask 3.4: 调整 `src/components/GameCheckIn.jsx` 和 `src/components/LocationCheckIn.jsx` 的输入框高度、间距和文字大小。
+  - [x] SubTask 3.5: 调整 `src/components/Timeline.jsx` 的间距和文字大小。
