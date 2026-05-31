@@ -36,11 +36,63 @@ function App() {
     setPunchData(data);
   }, []);
 
-  // 加载目标点数据
-  const loadTargetPoints = useCallback(() => {
-    const points = storage.getTargetPoints();
-    setTargetPoints(points);
+  // 自动导入 Excel 计划逻辑
+  const loadExcelPlanAutomatically = useCallback(async () => {
+    // 简单轮询等待 XLSX 库加载完成
+    let attempts = 0;
+    while (!window.XLSX && attempts < 10) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      attempts++;
+    }
+    
+    if (!window.XLSX) {
+      console.warn('XLSX library failed to load, skipping auto-import');
+      return;
+    }
+
+    try {
+      const response = await fetch('/床车一年全国迁徙计划.xlsx');
+      if (!response.ok) throw new Error('网络请求失败');
+      const arrayBuffer = await response.arrayBuffer();
+      const workbook = window.XLSX.read(arrayBuffer, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const data = window.XLSX.utils.sheet_to_json(worksheet);
+
+      const importedPoints = data.map((row, index) => {
+        const rowValues = Object.values(row);
+        const planName = row['周计划'] || row['计划'] || row['任务'] || rowValues[0] || `计划 ${index + 1}`;
+        const address = row['地点'] || row['位置'] || row['城市'] || rowValues[1] || rowValues[0] || '未知地点';
+        const estimatedTime = row['预计时间'] || row['时间'] || row['日期'] || '';
+        
+        return {
+          lat: 39.9042 + (Math.random() - 0.5) * 5, // 暂用随机坐标分布在周边
+          lng: 116.4074 + (Math.random() - 0.5) * 5,
+          address: `${planName} - ${address}`,
+          estimatedTime: estimatedTime,
+          checkedIn: false,
+          fromExcel: true
+        };
+      });
+
+      setTargetPoints(importedPoints);
+      storage.setTargetPoints(importedPoints);
+      console.log(`Auto-imported ${importedPoints.length} target points.`);
+    } catch (error) {
+      console.error('自动导入 Excel 失败:', error);
+    }
   }, []);
+
+  // 加载目标点数据
+  const loadTargetPoints = useCallback(async () => {
+    const points = storage.getTargetPoints();
+    if (!points || points.length === 0) {
+      // 本地没有数据时，自动从 Excel 导入
+      await loadExcelPlanAutomatically();
+    } else {
+      setTargetPoints(points);
+    }
+  }, [loadExcelPlanAutomatically]);
 
   // 组件挂载时检查本地存储中的登录状态并加载打卡数据和目标点数据
   useEffect(() => {
@@ -111,49 +163,6 @@ function App() {
       storage.setTargetPoints(newPoints);
       return newPoints;
     });
-  }, []);
-
-  // 导入 Excel 计划
-  const handleImportExcel = useCallback(async () => {
-    if (!window.XLSX) {
-      alert('解析库尚未加载完毕，请稍后再试');
-      return;
-    }
-    try {
-      const response = await fetch('/床车一年全国迁徙计划.xlsx');
-      if (!response.ok) throw new Error('网络请求失败');
-      const arrayBuffer = await response.arrayBuffer();
-      const workbook = window.XLSX.read(arrayBuffer, { type: 'array' });
-      const firstSheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[firstSheetName];
-      const data = window.XLSX.utils.sheet_to_json(worksheet);
-
-      const importedPoints = data.map((row, index) => {
-        const rowValues = Object.values(row);
-        const planName = row['周计划'] || row['计划'] || row['任务'] || rowValues[0] || `计划 ${index + 1}`;
-        const address = row['地点'] || row['位置'] || row['城市'] || rowValues[1] || rowValues[0] || '未知地点';
-        const estimatedTime = row['预计时间'] || row['时间'] || row['日期'] || '';
-        
-        return {
-          lat: 39.9042 + (Math.random() - 0.5) * 5, // 暂用随机坐标分布在周边
-          lng: 116.4074 + (Math.random() - 0.5) * 5,
-          address: `${planName} - ${address}`,
-          estimatedTime: estimatedTime,
-          checkedIn: false,
-          fromExcel: true
-        };
-      });
-
-      setTargetPoints(prev => {
-        const newPoints = [...prev, ...importedPoints];
-        storage.setTargetPoints(newPoints);
-        return newPoints;
-      });
-      alert(`成功导入 ${importedPoints.length} 个目标点！`);
-    } catch (error) {
-      console.error('导入 Excel 失败:', error);
-      alert('导入失败，请确保 public 目录下存在该文件且格式正确。');
-    }
   }, []);
 
   // 更新目标点时间
@@ -229,7 +238,6 @@ function App() {
             targetPoints={targetPoints}
             onRemove={handleRemoveTargetPoint}
             onToggle={handleToggleTargetPoint}
-            onImportExcel={handleImportExcel}
             onUpdateTime={handleUpdateTargetTime}
           />
         </div>

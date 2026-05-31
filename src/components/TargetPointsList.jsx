@@ -4,7 +4,7 @@ import React from 'react';
  * 目标点列表组件
  * 展示在地图右侧，使用毛玻璃效果
  */
-const TargetPointsList = ({ targetPoints, onRemove, onToggle, onImportExcel, onUpdateTime }) => {
+const TargetPointsList = ({ targetPoints, onRemove, onToggle, onUpdateTime }) => {
   return (
     <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-4 max-h-[calc(100vh-6rem)] overflow-y-auto flex flex-col">
       <div className="flex items-center justify-between mb-4">
@@ -15,14 +15,6 @@ const TargetPointsList = ({ targetPoints, onRemove, onToggle, onImportExcel, onU
           </svg>
           <h3 className="text-forest font-bold text-lg">行程目标点</h3>
         </div>
-        {onImportExcel && (
-          <button 
-            onClick={onImportExcel}
-            className="text-xs bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-full transition-colors shadow-sm"
-          >
-            导入周计划
-          </button>
-        )}
       </div>
       
       {(!targetPoints || targetPoints.length === 0) ? (
