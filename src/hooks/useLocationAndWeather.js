@@ -16,14 +16,16 @@ export const useLocationAndWeather = () => {
     try {
       // 请求浏览器定位权限
       const { lat, lon } = await getCurrentPosition();
-      // 并行请求城市名称和天气数据以提升速度
-      const [city, weather] = await Promise.all([
+      // 并行请求城市名称、详细地址和天气数据以提升速度
+      const [city, detailedAddress, weather] = await Promise.all([
         getCityName(lat, lon),
+        getAddressDetail(lat, lon),
         getWeather(lat, lon)
       ]);
       
       setLocationData({
         city: city,
+        detailedAddress: detailedAddress,
         temp: `${weather.temperature}°C`,
         weather: weather.description,
         coords: { lat, lon },
