@@ -1,4 +1,42 @@
 /**
+ * 缓存对象，用于存储 API 响应结果
+ * 以降低请求频率，提升性能
+ */
+const apiCache = {
+  city: {},
+  address: {},
+  weather: {}
+};
+
+// 缓存过期时间（毫秒）
+const CACHE_EXPIRE_TIME = {
+  CITY: 1000 * 60 * 60 * 24, // 24小时
+  ADDRESS: 1000 * 60 * 60 * 24, // 24小时
+  WEATHER: 1000 * 60 * 30, // 30分钟
+};
+
+/**
+ * 检查并获取有效缓存
+ */
+const getValidCache = (cacheStore, key, expireTime) => {
+  const cached = cacheStore[key];
+  if (cached && (Date.now() - cached.timestamp < expireTime)) {
+    return cached.data;
+  }
+  return null;
+};
+
+/**
+ * 设置缓存
+ */
+const setCache = (cacheStore, key, data) => {
+  cacheStore[key] = {
+    data,
+    timestamp: Date.now()
+  };
+};
+
+/**
  * 获取当前设备的地理位置
  * 封装 navigator.geolocation.getCurrentPosition 为 Promise
  * @returns {Promise<{lat: number, lon: number}>} 返回包含纬度和经度的对象
@@ -32,6 +70,10 @@ export const getCurrentPosition = () => {
  * @returns {Promise<string>} 返回城市名称
  */
 export const getCityName = async (lat, lon) => {
+  const cacheKey = `${lat.toFixed(4)},${lon.toFixed(4)}`;
+  const cachedData = getValidCache(apiCache.city, cacheKey, CACHE_EXPIRE_TIME.CITY);
+  if (cachedData) return cachedData;
+
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`;
     const response = await fetch(url, {
@@ -50,6 +92,8 @@ export const getCityName = async (lat, lon) => {
     // 尝试从 address 中获取城市相关的名称
     const address = data.address || {};
     const city = address.city || address.town || address.village || address.county || address.state || '未知城市';
+    
+    setCache(apiCache.city, cacheKey, city);
     return city;
   } catch (error) {
     console.error('获取城市名称失败:', error);
@@ -65,6 +109,10 @@ export const getCityName = async (lat, lon) => {
  * @returns {Promise<string>} 返回详细地址
  */
 export const getAddressDetail = async (lat, lon) => {
+  const cacheKey = `${lat.toFixed(4)},${lon.toFixed(4)}`;
+  const cachedData = getValidCache(apiCache.address, cacheKey, CACHE_EXPIRE_TIME.ADDRESS);
+  if (cachedData) return cachedData;
+
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=14&addressdetails=1`;
     const response = await fetch(url, {
@@ -79,7 +127,10 @@ export const getAddressDetail = async (lat, lon) => {
     }
     
     const data = await response.json();
-    return data.display_name || '未知地址';
+    const addressDetail = data.display_name || '未知地址';
+    
+    setCache(apiCache.address, cacheKey, addressDetail);
+    return addressDetail;
   } catch (error) {
     console.error('获取详细地址失败:', error);
     return '未知地址';
@@ -129,6 +180,10 @@ const weatherCodeMap = {
  * @returns {Promise<{temperature: number, description: string, code: number}>} 天气信息对象
  */
 export const getWeather = async (lat, lon) => {
+  const cacheKey = `${lat.toFixed(4)},${lon.toFixed(4)}`;
+  const cachedData = getValidCache(apiCache.weather, cacheKey, CACHE_EXPIRE_TIME.WEATHER);
+  if (cachedData) return cachedData;
+
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`;
     const response = await fetch(url);
@@ -148,11 +203,14 @@ export const getWeather = async (lat, lon) => {
     const weatherCode = current.weather_code;
     const description = weatherCodeMap[weatherCode] || '未知天气';
     
-    return {
+    const weatherData = {
       temperature,
       description,
       code: weatherCode,
     };
+    
+    setCache(apiCache.weather, cacheKey, weatherData);
+    return weatherData;
   } catch (error) {
     console.error('获取天气信息失败:', error);
     throw error;

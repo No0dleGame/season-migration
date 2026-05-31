@@ -8,7 +8,7 @@ const TargetPointsList = ({ targetPoints, onRemove }) => {
   if (!targetPoints || targetPoints.length === 0) return null;
 
   return (
-    <div className="absolute top-20 right-4 z-40 w-80 bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
+    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
       <div className="flex items-center gap-2 mb-4">
         <svg className="w-5 h-5 text-terracotta" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />

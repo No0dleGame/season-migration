@@ -1,0 +1,6 @@
+- [x] `src/utils/locationService.js` 中的 API 调用具有缓存机制，不会在短时间内发起重复请求。
+- [x] `src/hooks/useLocationAndWeather.js` 成功创建并接管 `App.jsx` 的状态。
+- [x] `src/utils/dateService.js` 提供 `getCurrentSeason` 方法，`StatusBar` 显示的季节与当前月份相符。
+- [x] `src/components/TravelMap.jsx` 使用 `React.memo` 进行了性能优化，并且修复了 `defaultCenter` 数组引用的问题。
+- [x] 移动端视图下，左侧面板与右侧目标点列表不再发生严重的层叠遮挡。
+- [x] 所有重构和优化后，原有功能（定位、天气、地图打卡、目标点添加/删除）工作正常。

@@ -1,0 +1,12 @@
+# Tasks
+- [x] Task 1: 性能优化 - 添加定位与天气缓存机制
+  - [x] SubTask 1.1: 在 `src/utils/locationService.js` 中增加缓存机制，避免频繁重复调用 API。
+- [x] Task 2: 逻辑优化 - 抽离自定义 Hook 和工具函数
+  - [x] SubTask 2.1: 创建 `src/hooks/useLocationAndWeather.js`，抽离 `App.jsx` 中的定位天气逻辑。
+  - [x] SubTask 2.2: 创建 `src/utils/dateService.js`，实现 `getCurrentSeason` 动态获取当前季节。
+- [x] Task 3: 性能优化 - 组件渲染优化
+  - [x] SubTask 3.1: 在 `src/components/TravelMap.jsx` 中将 `defaultCenter` 移出渲染周期或使用 `useMemo`，并使用 `React.memo` 避免无谓重渲染。
+  - [x] SubTask 3.2: 在 `src/App.jsx` 中使用 `useCallback` 包装传递给子组件的方法（如 `handleAddTargetPoint`, `handleRemoveTargetPoint` 等）。
+- [x] Task 4: 易用性与响应式布局优化
+  - [x] SubTask 4.1: 修复 `src/App.jsx` 和 `src/components/TargetPointsList.jsx` 在移动端的层叠冲突（例如通过调整 Tailwind 类或合并面板展示逻辑）。
+  - [x] SubTask 4.2: 在 `src/App.jsx` 中使用动态季节数据传递给 `StatusBar`。

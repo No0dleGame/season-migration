@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -78,7 +78,7 @@ function MapClickHandler({ onMapClick }) {
  * @param {Array} props.targetPoints - 目标点数组
  * @param {Function} props.onAddTarget - 添加目标点的回调函数
  */
-export default function TravelMap({ currentLocation, role, targetPoints = [], onAddTarget }) {
+const TravelMap = ({ currentLocation, role, targetPoints = [], onAddTarget }) => {
   /**
    * 处理地图点击事件
    * @param {Object} latlng - 包含 lat 和 lng 的坐标对象
@@ -90,9 +90,11 @@ export default function TravelMap({ currentLocation, role, targetPoints = [], on
   };
 
   // 默认中心点：如果有当前位置则使用，否则使用默认坐标 (如北京天安门附近)
-  const defaultCenter = currentLocation?.lat && currentLocation?.lon
-    ? [currentLocation.lat, currentLocation.lon]
-    : [39.9042, 116.4074];
+  const defaultCenter = useMemo(() => {
+    return currentLocation?.lat && currentLocation?.lon
+      ? [currentLocation.lat, currentLocation.lon]
+      : [39.9042, 116.4074];
+  }, [currentLocation?.lat, currentLocation?.lon]);
 
   return (
     // 使用自然色系 (emerald-100) 边框、大圆角和柔和阴影适配整体 UI 风格
@@ -133,4 +135,6 @@ export default function TravelMap({ currentLocation, role, targetPoints = [], on
       </MapContainer>
     </div>
   );
-}
+};
+
+export default React.memo(TravelMap);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Login from './components/Login'
 import StatusBar from './components/StatusBar'
 import GameCheckIn from './components/GameCheckIn'
@@ -7,7 +7,9 @@ import Timeline from './components/Timeline'
 import TravelMap from './components/TravelMap'
 import TargetPointsList from './components/TargetPointsList'
 import { storage } from './utils/storage'
-import { getCurrentPosition, getCityName, getWeather, getAddressDetail } from './utils/locationService'
+import { getAddressDetail } from './utils/locationService'
+import { useLocationAndWeather } from './hooks/useLocationAndWeather'
+import { getCurrentSeason } from './utils/dateService'
 
 function App() {
   // 定义登录状态，默认为 false
@@ -19,18 +21,26 @@ function App() {
   // 目标点数据状态
   const [targetPoints, setTargetPoints] = useState([]);
   
-  // 定位与天气状态
-  const [locationData, setLocationData] = useState({
-    city: '',
-    temp: '',
-    weather: '',
-    coords: null,
-    loading: false,
-    error: null
-  });
+  // 定位与天气状态从 hook 获取
+  const { locationData, fetchLocationAndWeather } = useLocationAndWeather();
+
+  // 动态季节
+  const currentSeason = getCurrentSeason();
 
   // 面板开关状态
   const [isPanelOpen, setIsPanelOpen] = useState(true);
+
+  // 加载打卡数据
+  const loadPunchData = useCallback(() => {
+    const data = storage.getPunchData();
+    setPunchData(data);
+  }, []);
+
+  // 加载目标点数据
+  const loadTargetPoints = useCallback(() => {
+    const points = storage.getTargetPoints();
+    setTargetPoints(points);
+  }, []);
 
   // 组件挂载时检查本地存储中的登录状态并加载打卡数据和目标点数据
   useEffect(() => {
@@ -41,69 +51,28 @@ function App() {
       loadPunchData();
       loadTargetPoints();
     }
-  }, []);
+  }, [loadPunchData, loadTargetPoints]);
 
   // 当登录状态变为 true 时，获取定位和天气
   useEffect(() => {
     if (isLoggedIn) {
       fetchLocationAndWeather();
     }
-  }, [isLoggedIn]);
-
-  // 获取定位和天气数据
-  const fetchLocationAndWeather = async () => {
-    setLocationData(prev => ({ ...prev, loading: true, error: null }));
-    try {
-      // 请求浏览器定位权限
-      const { lat, lon } = await getCurrentPosition();
-      // 并行请求城市名称和天气数据以提升速度
-      const [city, weather] = await Promise.all([
-        getCityName(lat, lon),
-        getWeather(lat, lon)
-      ]);
-      
-      setLocationData({
-        city: city,
-        temp: `${weather.temperature}°C`,
-        weather: weather.description,
-        coords: { lat, lon },
-        loading: false,
-        error: null
-      });
-    } catch (err) {
-      setLocationData(prev => ({
-        ...prev,
-        loading: false,
-        error: err.message || '获取定位失败'
-      }));
-    }
-  };
-
-  // 加载打卡数据
-  const loadPunchData = () => {
-    const data = storage.getPunchData();
-    setPunchData(data);
-  };
-
-  // 加载目标点数据
-  const loadTargetPoints = () => {
-    const points = storage.getTargetPoints();
-    setTargetPoints(points);
-  };
+  }, [isLoggedIn, fetchLocationAndWeather]);
 
   // 添加目标点
-  const handleAddTargetPoint = async (coords) => {
+  const handleAddTargetPoint = useCallback(async (coords) => {
     // 先添加一个带有“加载中...”状态的临时点，避免用户觉得没反应
     const tempPoint = { ...coords, address: '正在获取地址信息...' };
-    const newPoints = [...targetPoints, tempPoint];
-    setTargetPoints(newPoints);
+    setTargetPoints(prev => {
+      const newPoints = [...prev, tempPoint];
+      return newPoints;
+    });
     
     try {
       const address = await getAddressDetail(coords.lat, coords.lng);
-      // 找到刚刚添加的那个点并更新地址
       setTargetPoints(prevPoints => {
         const updatedPoints = [...prevPoints];
-        // 假设最后一个添加的或者根据坐标匹配
         const index = updatedPoints.findIndex(p => p.lat === coords.lat && p.lng === coords.lng);
         if (index !== -1) {
           updatedPoints[index] = { ...coords, address };
@@ -123,33 +92,35 @@ function App() {
         return updatedPoints;
       });
     }
-  };
+  }, []);
 
   // 移除目标点
-  const handleRemoveTargetPoint = (index) => {
-    const newPoints = targetPoints.filter((_, i) => i !== index);
-    setTargetPoints(newPoints);
-    storage.setTargetPoints(newPoints);
-  };
+  const handleRemoveTargetPoint = useCallback((index) => {
+    setTargetPoints(prev => {
+      const newPoints = prev.filter((_, i) => i !== index);
+      storage.setTargetPoints(newPoints);
+      return newPoints;
+    });
+  }, []);
 
   /**
    * 登录成功的回调处理函数
    */
-  const handleLoginSuccess = (userRole) => {
+  const handleLoginSuccess = useCallback((userRole) => {
     setIsLoggedIn(true);
     setRole(userRole);
     loadPunchData();
     loadTargetPoints();
-  };
+  }, [loadPunchData, loadTargetPoints]);
 
   /**
    * 退出登录的处理函数
    */
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     storage.clearLoginStatus();
     setIsLoggedIn(false);
     setRole(null);
-  };
+  }, []);
 
   // 如果未登录，则渲染登录组件，并传入登录成功的回调
   if (!isLoggedIn) {
@@ -170,7 +141,7 @@ function App() {
 
       {/* StatusBar */}
       <div className="absolute top-4 left-4 z-40">
-        <StatusBar locationData={locationData} season="春日季" showReminder={true} />
+        <StatusBar locationData={locationData} season={currentSeason} showReminder={true} />
       </div>
 
       {/* 左侧可折叠面板 */}
@@ -190,10 +161,12 @@ function App() {
 
       {/* 右侧目标点列表 */}
       {role === 'admin' && (
-        <TargetPointsList 
-          targetPoints={targetPoints}
-          onRemove={handleRemoveTargetPoint}
-        />
+        <div className={`absolute top-20 right-4 z-30 md:z-40 w-[calc(100vw-2rem)] md:w-80 transition-opacity duration-300 ${isPanelOpen ? 'opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto' : 'opacity-100 pointer-events-auto'}`}>
+          <TargetPointsList 
+            targetPoints={targetPoints}
+            onRemove={handleRemoveTargetPoint}
+          />
+        </div>
       )}
 
       {/* 移动端控制面板开关的 FAB 按钮 */}
